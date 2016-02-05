@@ -1,6 +1,6 @@
 local class = require 'libs.middleclass'
 local Player = class('Player')
-
+--ass
 local other = { speed=32, dx=0, dy=0, radius=2 }
 
 function Player:initialize(world, x, y, width, height)
