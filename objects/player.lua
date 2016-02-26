@@ -1,7 +1,19 @@
+local collide = require '../collide'
 local class = require 'libs.middleclass'
 local Player = class('Player')
 
-local other = { speed=32, dx=0, dy=0, radius=2 }
+local other = { 
+	speed=32, 
+	dx=0, 
+	dy=0, 
+	radius= {
+		size=1, 
+		x=0,
+		y=0,
+		width=0,
+		height=0
+	} 
+}
 
 function Player:initialize(world, x, y, width, height)
 	self.x, self.y = x, y
@@ -12,43 +24,53 @@ function Player:initialize(world, x, y, width, height)
 end
 
 function Player:collision()
-	local world = self.world
-	local dx, dy = self.other.dx, self.other.dy
-	if dx ~= 0 or dy ~= 0 then
-	    local cols
-	    self.x, self.y, cols, cols_len = world:move(self, self.x + dx, self.y + dy)
-	    for i=1, cols_len do
-	      local col = cols[i]
-	      consolePrint(("col.other = %s, col.type = %s, col.normal = %d,%d"):format(col.other, col.type, col.normal.x, col.normal.y))
-	    end
-    end	
+	
 end
 
-function Player:checkRadius()
+function Player:setRadius()
+	local size = self.other.radius.size
+	self.other.radius.x = self.x-size*self.width
+	self.other.radius.y = self.y-size*self.height
 
+	self.other.radius.width = size*2*self.width+self.width
+	self.other.radius.height = size*2*self.height+self.height
+end
+
+function Player:setPosition(x, y)
+	self.x, self.y = x, y
+end
+
+function Player:getCenter()
+	return self.x+self.width/2, self.y+self.height/2
 end
 
 function Player:update(dt)
 	Player:collision()
+	Player:setRadius()
 end
 
 function Player:moveWithKeys(key)
+	
 	self.other.dx, self.other.dy = 0, 0
 	if key == 'd' then
-		self.other.dx = self.other.dx + self.other.speed
+		self.other.dx = self.other.speed
 	elseif key == 'a' then
-		self.other.dx = self.other.dx - self.other.speed
+		self.other.dx = -self.other.speed
 	elseif key == 'w' then
-		self.other.dy = self.other.dy - self.other.speed
+		self.other.dy = -self.other.speed
 	elseif key == 's' then
-		self.other.dy = self.other.dy + self.other.speed
+		self.other.dy = self.other.speed
 	end
-	print(self.other.dx)
+	self.x = self.x + self.other.dx
+	self.y = self.y + self.other.dy
 end
 
 function Player:draw()
 	local lg = love.graphics
+	local radius = self.other.radius
 	lg.rectangle('fill', self.x, self.y, self.width, self.height)
+	lg.rectangle('line', self.other.radius.x, self.other.radius.y,
+		self.other.radius.width, self.other.radius.height)
 end
 
 return Player
