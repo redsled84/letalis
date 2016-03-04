@@ -12,7 +12,12 @@ local other = {
 		y=0,
 		width=0,
 		height=0
-	} 
+	}
+}
+
+local dirs = {
+	nx = 0
+	ny = 0
 }
 
 function Player:initialize(world, x, y, width, height)
@@ -23,15 +28,13 @@ function Player:initialize(world, x, y, width, height)
 	self.world:add(self, x, y, width, height)
 end
 
-function Player:collision()
-	
+function Player:stopOnCollisionCheck(nx, ny)
 end
 
 function Player:setRadius()
 	local size = self.other.radius.size
 	self.other.radius.x = self.x-size*self.width
 	self.other.radius.y = self.y-size*self.height
-
 	self.other.radius.width = size*2*self.width+self.width
 	self.other.radius.height = size*2*self.height+self.height
 end
@@ -45,20 +48,19 @@ function Player:getCenter()
 end
 
 function Player:update(dt)
-	Player:collision()
 	Player:setRadius()
 end
 
 function Player:moveWithKeys(key)
 	
 	self.other.dx, self.other.dy = 0, 0
-	if key == 'd' then
+	if key == 'd' and not dirs.RIGHT then
 		self.other.dx = self.other.speed
-	elseif key == 'a' then
+	elseif key == 'a' and not dirs.LEFT then
 		self.other.dx = -self.other.speed
-	elseif key == 'w' then
+	elseif key == 'w' and not dirs.TOP then
 		self.other.dy = -self.other.speed
-	elseif key == 's' then
+	elseif key == 's' and not dirs.DOWN then
 		self.other.dy = self.other.speed
 	end
 	self.x = self.x + self.other.dx

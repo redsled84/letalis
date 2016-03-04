@@ -13,11 +13,11 @@ function love.load()
 
 	local x = 96
 	local y = 96
-	for i=1, 5 do
+	-- for i=1, 5 do
 		Enemy:newEnemy(x, y, 32, 32)
-		x = x + 32
-		y = y + 64
-	end
+	-- 	x = x + 32
+	-- 	y = y + 64
+	-- end
 
 end
 
@@ -25,8 +25,10 @@ function love.update(dt)
 	Player:update(dt)
 	for i,v in ipairs(Enemy) do
 		local enemy = v
-		collide.check(Player.other.radius, enemy, function () 
-			print("Fuck you Tyler jk I love you boo", i)
+		collide.checkRadius(Player.other.radius, enemy, function (o1, o2) 
+			local nx, ny = collide.checkSides(Player, o2)
+			print(nx, ny)
+			Player.stopOnCollisionCheck(nx, ny)
 		end)
 	end
 end
