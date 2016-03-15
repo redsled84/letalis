@@ -25,7 +25,7 @@ function Player:initialize(world, x, y, width, height)
 end
 
 local function collisionFilter(item, other)
-	if other.is == "block" then
+	if other.is == "item" then
 		return 'cross'
 	else
 		return 'slide'
@@ -49,7 +49,8 @@ function Player:collision(f)
 				self.y = v.other.y + v.other.height
 			end
 		else
-			f(col.other, world)
+			world:remove(v.other)
+			print(v.other)
 		end
 	end
 end
