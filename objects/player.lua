@@ -32,7 +32,7 @@ local function collisionFilter(item, other)
 	end
 end
 
-function Player:collision(f)
+function Player:collision()
 	local world = self.world
 	local actualX, actualY, cols, len = world:move(self, self.x, self.y, collisionFilter)
 	for i=1, len do
@@ -50,7 +50,6 @@ function Player:collision(f)
 			end
 		else
 			world:remove(v.other)
-			print(v.other)
 		end
 	end
 end
@@ -72,8 +71,8 @@ function Player:getCenter()
 	return self.x+self.width/2, self.y+self.height/2
 end
 
-function Player:update(dt, f)
-	Player:collision(f)
+function Player:update(dt)
+	Player:collision()
 	Player:setRadius()
 end
 
@@ -95,6 +94,7 @@ end
 function Player:draw()
 	local lg = love.graphics
 	local radius = self.other.radius
+	lg.setColor(255,255,255)
 	lg.rectangle('fill', self.x, self.y, self.width, self.height)
 	lg.rectangle('line', self.other.radius.x, self.other.radius.y,
 		self.other.radius.width, self.other.radius.height)

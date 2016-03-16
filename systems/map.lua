@@ -1,5 +1,5 @@
 local class = require 'libs.middleclass'
-local Block = require 'block'
+local Block = require 'systems.block'
 local Map = class('Map')
 
 function Map:initialize(x, y, map)
@@ -16,7 +16,7 @@ function Map:loadData(world)
     self.itemCount = 0
     for i=1, #self.map.layers do
         local v = self.map.layers[i]
-        if v.name == "Solid" then
+        if v.name == "walls" then
             for j=1, #v.data do
                 local num = v.data[j]
                 -- Loading blocks here but would ideally want to do it seperately
@@ -46,12 +46,16 @@ end
 
 function Map:loadMap(map, world)
     self:initialize(0, 0, map)
-    self:loadTiles(world)
+    self:loadData(world)
 end
 
 function Map:getTileIndex(x, y)
     local index = y/self.tileheight*self.mapwidth + (x+self.tilewidth)/self.tilewidth
     return index
+end
+
+function Map:getMapData()
+    return self.data
 end
 
 return Map
