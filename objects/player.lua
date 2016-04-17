@@ -1,27 +1,16 @@
-local collide = require 'collide'
 local inspect = require 'libs.inspect'
 local class = require 'libs.middleclass'
+local Game = require 'game'
+local world = Game.world
 local Player = class('Player')
 
-local other = { 
-	speed=32, 
-	dx=0, 
-	dy=0, 
-	radius= {
-		size=1, 
-		x=0,
-		y=0,
-		width=0,
-		height=0
-	} 
-}
-
-function Player:initialize(world, x, y, width, height)
+function Player:initialize(x, y, w, h)
 	self.x, self.y = x, y
-	self.world = world
-	self.width, self.height = width, height
-	self.other = other
-	self.world:add(self, x, y, width, height)
+	self.w, self.h = w, h
+	self.spd = 256
+	self.vx, self.vy = 0, 0
+	self.radius = 100
+	world:add(self, x, y, w, h)
 end
 
 local function collisionFilter(item, other)
@@ -32,21 +21,50 @@ local function collisionFilter(item, other)
 	end
 end
 
+function Player:movement(dt)
+	local lk = love.keyboard
+
+	if lk.isDown('d') then
+		self.vx = self.vx + self.spd * dt
+	end
+	if lk.isDown('a') then
+		self.vx = self.vx - self.spd * dt
+	end
+	if lk.isDown('s') then
+		
+	end
+	if lk.isDown('w') then
+		
+	end
+
+	self.x, self.y = self.x+self.vx*dt, self.y+self.vy*dt
+	-- print(x, y, self.x, self.y)
+	world:update(Player, self.x, self.y)
+	-- didn't even get to work on the dungeons , do dungeons
+
+	-- need to make the physics bodies asleep, then generate rooms, find touching sides, generate doors
+end
+
 function Player:collision()
-	local world = self.world
 	local actualX, actualY, cols, len = world:move(self, self.x, self.y, collisionFilter)
 	for i=1, len do
 		local v = cols[i]
 		if v.type == 'slide' then
-			if v.normal.x == -1 then
-				self.x = v.other.x - self.width
-			elseif v.normal.x == 1 then
-				self.x = v.other.x + v.other.width
+			if v.normal.x == -1 then 
+				self.x = v.other.x-v.other.w
+				self.vx = 0
+			end
+			if v.normal.x == 1 then
+				self.x = v.other.x+v.other.w
+				self.vx = 0
 			end
 			if v.normal.y == -1 then
-				self.y = v.other.y - self.height
-			elseif v.normal.y == 1 then
-				self.y = v.other.y + v.other.height
+				self.y = v.other.y-v.other.h
+				self.vy = 0
+			end
+			if v.normal.y == 1 then
+				self.y = v.other.y+v.other.h
+				self.vy = 0
 			end
 		else
 			world:remove(v.other)
@@ -54,50 +72,21 @@ function Player:collision()
 	end
 end
 
-function Player:setRadius()
-	local size = self.other.radius.size
-	self.other.radius.x = self.x-size*self.width
-	self.other.radius.y = self.y-size*self.height
-
-	self.other.radius.width = size*2*self.width+self.width
-	self.other.radius.height = size*2*self.height+self.height
-end
-
-function Player:setPosition(x, y)
-	self.x, self.y = x, y
-end
-
 function Player:getCenter()
-	return self.x+self.width/2, self.y+self.height/2
+	return self.x+self.w/2, self.y+self.h/2
 end
 
 function Player:update(dt)
 	Player:collision()
-	Player:setRadius()
-end
-
-function Player:moveWithKeys(key)
-	self.other.dx, self.other.dy = 0, 0
-	if key == 'd' then
-		self.other.dx = self.other.speed
-	elseif key == 'a' then
-		self.other.dx = -self.other.speed
-	elseif key == 'w' then
-		self.other.dy = -self.other.speed
-	elseif key == 's' then
-		self.other.dy = self.other.speed
-	end
-	self.x = self.x + self.other.dx
-	self.y = self.y + self.other.dy
+	Player:movement(dt)
 end
 
 function Player:draw()
 	local lg = love.graphics
-	local radius = self.other.radius
+	local x, y = self:getCenter()
 	lg.setColor(255,255,255)
-	lg.rectangle('fill', self.x, self.y, self.width, self.height)
-	lg.rectangle('line', self.other.radius.x, self.other.radius.y,
-		self.other.radius.width, self.other.radius.height)
+	lg.rectangle('fill', self.x, self.y, self.w, self.h)
+	lg.circle('line', x, y, self.radius)
 end
 
 return Player

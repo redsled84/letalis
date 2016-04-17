@@ -1,3 +1,5 @@
+local Game = require 'game'
+local world = Game.world
 local class = require 'libs.middleclass'
 local Block = require 'systems.block'
 local Map = class('Map')
@@ -10,7 +12,7 @@ function Map:initialize(x, y, map)
     self.tilewidth, self.tileheight = map.tilewidth, map.tileheight
 end
 
-function Map:loadData(world)
+function Map:loadData()
     local mapwidth = self.mapwidth
     local tilewidth, tileheight = self.tilewidth, self.tileheight
     self.itemCount = 0
@@ -24,8 +26,8 @@ function Map:loadData(world)
                     local block = Block:newBlock({
                     	x = self.x, 
                     	y = self.y, 
-                    	width = self.tilewidth,
-                    	height = self.tileheight, 
+                    	w = self.tilewidth,
+                    	h = self.tileheight, 
                     	is = ''
                     }, world)
                     if num == 1 then
@@ -44,7 +46,7 @@ function Map:loadData(world)
     end
 end
 
-function Map:loadMap(map, world)
+function Map:loadMap(map)
     self:initialize(0, 0, map)
     self:loadData(world)
 end
