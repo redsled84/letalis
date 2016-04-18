@@ -3,6 +3,7 @@ local class = require 'libs.middleclass'
 local Game = require 'game'
 local world = Game.world
 local Player = class('Player')
+local polyfill = require 'libs.1polyfill'
 
 function Player:initialize(x, y, w, h)
 	self.x, self.y = x, y
@@ -24,17 +25,16 @@ end
 function Player:movement(dt)
 	local lk = love.keyboard
 
-	if lk.isDown('d') then
-		self.vx = self.vx + self.spd * dt
+	if lk.isDown('d') or lk.isDown("right") then
+		self.vx = polyfill.approach(self.vx, self.spd *dt, 300)
+	elseif lk.isDown('a')  or lk.isDown("left") then
+		self.vx = polyfill.approach(self.vx, -self.spd *dt, 300)
 	end
-	if lk.isDown('a') then
-		self.vx = self.vx - self.spd * dt
-	end
-	if lk.isDown('s') then
+
+	if lk.isDown('s')  or lk.isDown("down") then
 		self.vy = self.vy + self.spd * dt
-	end
-	if lk.isDown('w') then
-		self.vy = self.vy - self.spd * dt	
+	elseif lk.isDown('w') or lk.isDown("up") then
+		self.vy = self.vy - self.spd * dt
 	end
 
 	self.x, self.y = self.x+self.vx*dt, self.y+self.vy*dt

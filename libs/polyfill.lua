@@ -35,4 +35,13 @@ function polyfill.setPosition(a1, a2, b1, b2)
 	return a, b
 end
 
+function polyfill.approach (sVel, accel, goal)
+	local dir = (sVel - goal > sVel) and -1 or (sVel - goal < sVel and 1 or (sVel > 0 and -1 or 1))
+	if (dir > 0 and sVel + accel > goal) or (dir < 0 and sVel - accel < goal) then
+		return goal
+	end
+	sVel = sVel + dir * accel
+	return sVel
+end
+
 return polyfill
