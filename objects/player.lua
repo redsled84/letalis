@@ -51,7 +51,7 @@ function Player:collision()
 		local v = cols[i]
 		if v.type == 'slide' then
 			if v.normal.x == -1 then 
-				self.x = v.other.x-v.other.w
+				self.x = v.other.x-self.w
 				self.vx = 0
 			end
 			if v.normal.x == 1 then
@@ -59,7 +59,7 @@ function Player:collision()
 				self.vx = 0
 			end
 			if v.normal.y == -1 then
-				self.y = v.other.y-v.other.h
+				self.y = v.other.y-self.h
 				self.vy = 0
 			end
 			if v.normal.y == 1 then

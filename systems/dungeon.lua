@@ -126,6 +126,24 @@ function Dungeon:generateDoors()
 end
 
 
+function Dungeon:getBoundryPoint(type)
+	local cX = {}
+	local cY = {}
+	for i=1, #self.rooms do
+		local room = self.rooms[i]
+		cX[#cX+1] = room.x
+		cY[#cY+1] = room.y
+	end
+	table.sort(cX)
+	table.sort(cY)
+	if type == 'close' then
+		return cX[1], cY[1]
+	elseif type == 'far' then
+		return cX[#cX], cY[#cY]
+	end
+end
+
+
 function Dungeon:getRandomPointInRandomRoom()
 	local rndIndex = math.random(1, #self.rooms)
 	local rndRoom = self.rooms[rndIndex]
