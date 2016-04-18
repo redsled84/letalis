@@ -10,22 +10,25 @@ local world = Game.world
 local level = txt.parseMap('levels/level_01.txt')
 
 function love.load()
-	Player:initialize(0, 0, 32, 32, other)
-	Map:loadMap(level)
+	
+	-- Map:loadMap(level)
 	Dungeon:load(5)
 end
 
 function love.update(dt)
-	Player:update(dt)
-	Dungeon:generateDungeon(dt)
-	for i, v in ipairs(Dungeon.physicsBodies) do
-		print(v.x, v.y, i)
+	if #Dungeon.rooms > 0 then
+		Player:update(dt)
 	end
-	print()
+	Dungeon:generateDungeon(dt, function()
+		local x, y = Dungeon:getRandomPointInRandomRoom()
+		Player:initialize(x, y, 32, 32)
+	end)
 end
 
 function love.draw()
-	Player:draw()
+	if #Dungeon.rooms > 0 then
+		Player:draw()
+	end
 
 	-- drawing world items
 	local items, len = world:getItems()

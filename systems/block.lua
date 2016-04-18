@@ -13,7 +13,7 @@ function Block:getBlockIndex(x, y)
 	local blocks = {}
 	for i=1, len do
 		local v = items[i]
-		if v.x == x and v.y == y and v.is == 'wall' then
+		if v.x == x and v.y == y then
 			blocks[#blocks+1] = v
 		end
 	end

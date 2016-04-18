@@ -31,15 +31,15 @@ function Player:movement(dt)
 		self.vx = self.vx - self.spd * dt
 	end
 	if lk.isDown('s') then
-		
+		self.vy = self.vy + self.spd * dt
 	end
 	if lk.isDown('w') then
-		
+		self.vy = self.vy - self.spd * dt	
 	end
 
 	self.x, self.y = self.x+self.vx*dt, self.y+self.vy*dt
 	-- print(x, y, self.x, self.y)
-	world:update(Player, self.x, self.y)
+	world:update(self, self.x, self.y)
 	-- didn't even get to work on the dungeons , do dungeons
 
 	-- need to make the physics bodies asleep, then generate rooms, find touching sides, generate doors
@@ -70,6 +70,11 @@ function Player:collision()
 			world:remove(v.other)
 		end
 	end
+end
+
+function Player:setPosition(x, y)
+	self.x, self.y = x, y
+	world:update(self, self.x, self.y)
 end
 
 function Player:getCenter()

@@ -1,5 +1,6 @@
 local Game = require 'game'
 local tileSize = Game.tileSize
+local bumpWorld = Game.world
 local Physics = require 'libs.physics'
 local Block = require 'systems.block'
 local polyfill = require 'libs.polyfill'
@@ -10,12 +11,14 @@ local Dungeon = class('Dungeon')
 
 math.randomseed(os.time()); math.random(); math.random(); math.random()
 
+
 function Dungeon:initialize()
 	self.rooms = {}
 	self.doors = {}
 	self.physicsBodies = {}
 	self.physicsWorld = physicsWorld
 end
+
 
 function Dungeon:getPhysicsBodiesIsSleep()
 	local counter = 0
@@ -30,12 +33,14 @@ function Dungeon:getPhysicsBodiesIsSleep()
 	end
 end
 
+
 function Dungeon:insertRooms()
 	for i=1, #self.physicsBodies do
 		local v = self.physicsBodies[i]
 		table.insert(self.rooms, {x = v.x , y = v.y , w = v.w, h = v.h, id=i})
 	end
 end
+
 
 function Dungeon:loopRooms(f)
 	local temp = polyfill.shallowCopy(self.rooms)
@@ -65,6 +70,7 @@ function Dungeon:loopRooms(f)
 		temp = polyfill.shallowCopy(self.rooms)
 	end
 end
+
 
 function Dungeon:generateDoors()
 	self:loopRooms(function(A, B, room, tempRoom)
@@ -119,6 +125,16 @@ function Dungeon:generateDoors()
 	end)
 end
 
+
+function Dungeon:getRandomPointInRandomRoom()
+	local rndIndex = math.random(1, #self.rooms)
+	local rndRoom = self.rooms[rndIndex]
+	local rndRoomX = math.random(1, rndRoom.w/tileSize)
+	local rndRoomY = math.random(1, rndRoom.h/tileSize)
+	return rndRoom.x + rndRoomX*tileSize, rndRoom.y + rndRoomY*tileSize
+end
+
+
 function Dungeon:load(n)
 	self:initialize()
 	for i=1, n do
@@ -127,6 +143,7 @@ function Dungeon:load(n)
 		v.body:setFixedRotation(true)
 	end
 end
+
 
 function Dungeon:generateBlocks()
 	-- append blocks for each room
@@ -153,6 +170,7 @@ function Dungeon:generateBlocks()
 			for j=1, #self.doors do
 				local door = self.doors[j]
 				if door.x == block.x and door.y == block.y then
+					Block:remove(door.x, door.y)
 					if not door.isSide then
 						Block:remove(door.x, door.y+tileSize)
 					else
@@ -163,6 +181,7 @@ function Dungeon:generateBlocks()
 		end			
 	end
 end
+
 
 function Dungeon:generateRooms()
 	if self:getPhysicsBodiesIsSleep() and #self.physicsBodies > 0 then
@@ -178,17 +197,20 @@ function Dungeon:generateRooms()
 	end
 end
 
-function Dungeon:generateDungeon(dt)
+
+function Dungeon:generateDungeon(dt, event)
 	if self:getPhysicsBodiesIsSleep() and #self.physicsBodies > 0 then
 		for i, v in ipairs(self.physicsBodies) do
 			v.x, v.y = v.body:getWorldPoints(v.shape:getPoints())
 			v.x = v.x - v.x % tileSize
 			v.y = v.y - v.y % tileSize
 		end
-		Dungeon:generateRooms()
+		self:generateRooms()
+		event()
 	end
 	self.physicsWorld:update(dt)
 end
+
 
 function Dungeon:draw()
 	for _,v in ipairs(self.physicsBodies) do
@@ -203,6 +225,11 @@ function Dungeon:draw()
 		love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
 		love.graphics.setColor(230, 230, 230, 100)
 		love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
+	end
+
+	for _, v in ipairs(self.doors) do
+		love.graphics.setColor(255,0,0)
+		love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
 	end
 end
 
