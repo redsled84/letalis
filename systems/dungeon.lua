@@ -17,6 +17,7 @@ function Dungeon:initialize()
 	self.doors = {}
 	self.physicsBodies = {}
 	self.physicsWorld = physicsWorld
+	self.touchingLines = {}
 end
 
 
@@ -91,15 +92,17 @@ function Dungeon:generateDoors()
 						x = B.x2
 					end
 
-					if math.abs(y2 - y1) > tileSize then
+					if math.abs(y2 - y1) >= tileSize then
 						local doorY = 0
-						if y2 - y1 - tileSize == 0 then
+						if math.abs(y2 - y1) - tileSize == 0 or math.abs(y2 - y1) == tileSize then
 							doorY = y1
 						else
 							doorY = (math.random(0, (y2-y1-tileSize)/tileSize) * tileSize) + y1
 						end
 						self.doors[#self.doors+1] = {x=x-tileSize, y=doorY, w=tileSize, h=tileSize, isSide=true}
 					end
+
+					self.touchingLines[#self.touchingLines+1] = {x = x, y1 = y1, y2 = y2}
 				end
 				if A.x1 + 1 < B.x2 and A.x2 - 1 > B.x1 then
 					local y, x1, x2 = 0, 0, 0
@@ -110,15 +113,17 @@ function Dungeon:generateDoors()
 						y = B.y2
 					end
 
-					if math.abs(x2 - x1) > tileSize then
+					if math.abs(x2 - x1) >= tileSize then
 						local doorX = 0
-						if math.abs(x2 - x1) - tileSize == 0 then
+						if math.abs(x2 - x1) - tileSize == 0 or math.abs(x2 - x1) == tileSize then
 							doorX = x1
 						else
 							doorX = (math.random(0, (x2-x1-tileSize)/tileSize) * tileSize) + x1
 						end
 						self.doors[#self.doors+1] = {x=doorX, y=y-tileSize, w=tileSize, h=tileSize, isSide=false}
 					end
+
+					self.touchingLines[#self.touchingLines+1] = {y = y, x1 = x1, x2 = x2}
 				end
 			end
 		end
@@ -126,7 +131,7 @@ function Dungeon:generateDoors()
 end
 
 
-function Dungeon:getBoundryPoint(type)
+function Dungeon:getBoundaryPoint(type)
 	local cX = {}
 	local cY = {}
 	for i=1, #self.rooms do
@@ -248,6 +253,15 @@ function Dungeon:draw()
 	for _, v in ipairs(self.doors) do
 		love.graphics.setColor(255,0,0)
 		love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
+	end
+
+	for _, v in ipairs(self.touchingLines) do
+		love.graphics.setColor(0,255,0)
+		if v.x ~= nil then
+			love.graphics.line(v.x, v.y1, v.x, v.y2)
+		else
+			love.graphics.line(v.x1, v.y, v.x2, v.y)
+		end
 	end
 end
 

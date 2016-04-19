@@ -14,42 +14,42 @@ local level = txt.parseMap('levels/level_01.txt')
 function love.load()
 	
 	-- Map:loadMap(level)
-	Dungeon:load(25)
+	Dungeon:load(15)
 end
 
 function love.update(dt)
 	Dungeon:generateDungeon(dt, function()
 		local x, y = Dungeon:getRandomPointInRandomRoom()
-		Player:initialize(x, y, 16, 16)
-		local x, y = Dungeon:getBoundryPoint('close')
-		local w, h = Dungeon:getBoundryPoint('far')
+		Player:initialize(x-16, y-16, 16, 16)
+		local x, y = Dungeon:getBoundaryPoint('close')
+		local w, h = Dungeon:getBoundaryPoint('far')
 		Camera = gamera.new(x,y,1000, 1000)
 		Camera:setWorld(-500, -500, 1750, 1750)
 	end)
 	if #Dungeon.rooms > 0 then
 		Player:update(dt)
 		Camera:setPosition(Player.x, Player.y)
-	print(math.ceil(Player.x), math.ceil(Player.y))
+		print(#Dungeon.touchingLines)
 	end
 
 end
 
 function love.draw()
 		if #Dungeon.rooms > 0 then
-	Camera:draw(function()
-			Player:draw()
-			-- drawing world items
-			local items, len = world:getItems()
-			for i=1, len do
-				local item = items[i]
-				love.graphics.setColor(0,0,255,100)
-				love.graphics.rectangle("fill", item.x, item.y, item.w, item.h)
-				love.graphics.setColor(255,255,255)
-				love.graphics.print(i, item.x, item.y)
-			end
+			Camera:draw(function()
+				Player:draw()
+				-- drawing world items
+				local items, len = world:getItems()
+				for i=1, len do
+					local item = items[i]
+					love.graphics.setColor(0,0,255,100)
+					love.graphics.rectangle("fill", item.x, item.y, item.w, item.h)
+					love.graphics.setColor(255,255,255)
+					love.graphics.print(i, item.x, item.y)
+				end
 
-			Dungeon:draw()
-	end)
+				Dungeon:draw()
+			end)
 		end
 end
 
