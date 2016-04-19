@@ -3,12 +3,12 @@ local class = require 'libs.middleclass'
 local Game = require 'game'
 local world = Game.world
 local Player = class('Player')
-local polyfill = require 'libs.1polyfill'
+local polyfill = require 'libs.polyfill'
 
 function Player:initialize(x, y, w, h)
 	self.x, self.y = x, y
 	self.w, self.h = w, h
-	self.spd = 256
+	self.spd = 600
 	self.vx, self.vy = 0, 0
 	self.radius = 100
 	world:add(self, x, y, w, h)
@@ -25,19 +25,23 @@ end
 function Player:movement(dt)
 	local lk = love.keyboard
 
-	if lk.isDown('d') or lk.isDown("right") then
+	if lk.isDown('d') then
 		self.vx = polyfill.approach(self.vx, self.spd *dt, 300)
-	elseif lk.isDown('a')  or lk.isDown("left") then
-		self.vx = polyfill.approach(self.vx, -self.spd *dt, 300)
+	elseif lk.isDown('a') then
+		self.vx = polyfill.approach(self.vx, self.spd *dt, -300)
+	else
+	    self.vx = polyfill.approach(self.vx, self.spd *dt *2, 0)
 	end
 
-	if lk.isDown('s')  or lk.isDown("down") then
-		self.vy = self.vy + self.spd * dt
-	elseif lk.isDown('w') or lk.isDown("up") then
-		self.vy = self.vy - self.spd * dt
+	if lk.isDown('s') then
+		self.vy = polyfill.approach(self.vy, self.spd *dt, 300)
+	elseif lk.isDown('w') then
+		self.vy = polyfill.approach(self.vy, self.spd *dt, -300)
+	else
+		self.vy = polyfill.approach(self.vy, self.spd *dt *2, 0)
 	end
 
-	self.x, self.y = self.x+self.vx*dt, self.y+self.vy*dt
+	self.x, self.y = self.x+self.vx *dt, self.y+self.vy *dt
 	-- print(x, y, self.x, self.y)
 	world:update(self, self.x, self.y)
 	-- didn't even get to work on the dungeons , do dungeons
