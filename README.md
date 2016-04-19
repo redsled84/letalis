@@ -1,4 +1,4 @@
 # topDownGame
 Game made originally for 20% at GBiT
 
-[!repo/repoImg1]
+![alt tag](https://raw.githubusercontent.com/redsled84/topDownGame/master/repo/repoImg1.png)
