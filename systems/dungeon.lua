@@ -112,7 +112,6 @@ function Dungeon:generateDoors()
 					elseif A.y1 < B.y2 + 1 and A.y1 > B.y1 then -- A is touching B's BOTTOM wall
 						y = B.y2
 					end
-
 					if math.abs(x2 - x1) >= tileSize then
 						local doorX = 0
 						if math.abs(x2 - x1) - tileSize == 0 or math.abs(x2 - x1) == tileSize then
@@ -152,8 +151,8 @@ end
 function Dungeon:getRandomPointInRandomRoom()
 	local rndIndex = math.random(1, #self.rooms)
 	local rndRoom = self.rooms[rndIndex]
-	local rndRoomX = math.random(1, rndRoom.w/tileSize)
-	local rndRoomY = math.random(1, rndRoom.h/tileSize)
+	local rndRoomX = math.random(2, rndRoom.w/tileSize-1)
+	local rndRoomY = math.random(2, rndRoom.h/tileSize-1)
 	return rndRoom.x + rndRoomX*tileSize, rndRoom.y + rndRoomY*tileSize
 end
 
