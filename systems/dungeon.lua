@@ -11,6 +11,7 @@ local Dungeon = class('Dungeon')
 
 math.randomseed(os.time()); math.random(); math.random(); math.random()
 
+-- NEED to split rooms, doors, physicsBodies, into different sub classes of Dungeon
 
 function Dungeon:initialize()
 	self.rooms = {}
@@ -148,11 +149,17 @@ function Dungeon:getBoundaryPoint(type)
 end
 
 
-function Dungeon:getRandomPointInRandomRoom()
+function Dungeon:getPointInRandomRoom(type)
 	local rndIndex = math.random(1, #self.rooms)
 	local rndRoom = self.rooms[rndIndex]
-	local rndRoomX = math.random(2, rndRoom.w/tileSize-1)
-	local rndRoomY = math.random(2, rndRoom.h/tileSize-1)
+	local rndRoomX, rndRoomY
+	if type == 'random' then
+		rndRoomX = math.random(2, rndRoom.w/tileSize-1)
+		rndRoomY = math.random(2, rndRoom.h/tileSize-1)
+	elseif type == 'corner' then
+		rndRoomX = 1
+		rndRoomY = 1 
+	end
 	return rndRoom.x + rndRoomX*tileSize, rndRoom.y + rndRoomY*tileSize
 end
 
