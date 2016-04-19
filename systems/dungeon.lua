@@ -16,6 +16,8 @@ math.randomseed(os.time()); math.random(); math.random(); math.random()
 function Dungeon:initialize()
 	self.rooms = {}
 	self.doors = {}
+	self.items = {}
+	self.chests = {}
 	self.physicsBodies = {}
 	self.physicsWorld = physicsWorld
 	self.touchingLines = {}
