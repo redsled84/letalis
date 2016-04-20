@@ -1,6 +1,6 @@
 local inspect = require 'libs.inspect'
 local class = require 'libs.middleclass'
-local Game = require 'game'
+local Game = require 'systems.game-sys.game'
 local world = Game.world
 local Player = class('Player')
 local polyfill = require 'libs.polyfill'

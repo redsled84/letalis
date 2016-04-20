@@ -1,4 +1,4 @@
-local Game = require 'game'
+local Game = require 'systems.game-sys.game'
 local world = Game.world
 local class = require 'libs.middleclass'
 local Block = class('Block')

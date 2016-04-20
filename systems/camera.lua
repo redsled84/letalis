@@ -1,5 +1,5 @@
 local gamera = require 'libs.gamera'
-local Game = require 'game'
+local Game = require 'systems.game-sys.game'
 local tileSize = Game.tileSize
 local Dungeon = require 'systems.dungeon'
 local Camera = {}

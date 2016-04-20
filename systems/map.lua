@@ -1,18 +1,22 @@
-local Game = require 'game'
+local Game = require 'systems.game-sys.game'
 local world = Game.world
 local class = require 'libs.middleclass'
+local txt = require 'libs.txt'
 local Block = require 'systems.block'
 local Map = class('Map')
 
 function Map:initialize(x, y, map)
-    self.x, self.y = x, y
-    self.data = {}
-    self.map = map
-    self.mapwidth, self.mapheight = map.w, map.h 
-    self.tilewidth, self.tileheight = map.tilewidth, map.tileheight
+    
+    
 end
 
-function Map:loadData()
+function Map:newMap(x, y, path)
+    local MAP = txt.parseMap(path)
+    map.x, map.y = x, y
+    map.data = {}
+    map.map = map
+    map.mapwidth, map.mapheight = map.w, map.h 
+    map.tilewidth, map.tileheight = map.tilewidth, map.tileheight
     local mapwidth = self.mapwidth
     local tilewidth, tileheight = self.tilewidth, self.tileheight
     self.itemCount = 0
@@ -34,7 +38,7 @@ function Map:loadData()
                     	block.is = 'wall'
                     end
                 end
-                if j % mapwidth == 0 then
+                if j % map.mapwidth == 0 then
                     self.x = 0
                     self.y = self.y + tileheight
                 else
@@ -44,20 +48,12 @@ function Map:loadData()
             end
         end
     end
+    return map
 end
 
 function Map:loadMap(map)
     self:initialize(0, 0, map)
-    self:loadData(world)
-end
-
-function Map:getTileIndex(x, y)
-    local index = y/self.tileheight*self.mapwidth + (x+self.tilewidth)/self.tilewidth
-    return index
-end
-
-function Map:getMapData()
-    return self.data
+    self:loadData()
 end
 
 return Map

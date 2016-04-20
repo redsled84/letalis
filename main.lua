@@ -5,7 +5,7 @@ local txt = require 'libs.txt'
 local Block = require 'systems.block'
 local Tiles = require 'systems.tiles'
 local Dungeon = require 'systems.dungeon'
-local Game = require 'game'
+local Game = require 'systems.game-sys.game'
 local gamera = require 'libs.gamera'
 local Camera 
 local world = Game.world

@@ -1,4 +1,4 @@
-local Game = require 'game'
+local Game = require 'systems.game-sys.game'
 local tileSize = Game.tileSize
 local bumpWorld = Game.world
 local Physics = require 'libs.physics'
