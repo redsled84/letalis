@@ -1,6 +1,5 @@
-local Game = require 'systems.game-sys.game'
-local tileSize = Game.tileSize
-print(tileSize)
+local Globals = require 'globals'
+local tileSize = Globals.tileSize
 local polyfill = {}
 
 function polyfill.shallowCopy(t)

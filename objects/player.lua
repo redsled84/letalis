@@ -1,7 +1,7 @@
 local inspect = require 'libs.inspect'
 local class = require 'libs.middleclass'
-local Game = require 'systems.game-sys.game'
-local world = Game.world
+local Globals = require 'globals'
+local world = Globals.world
 local Player = class('Player')
 local polyfill = require 'libs.polyfill'
 
@@ -53,7 +53,7 @@ function Player:collision()
 	local actualX, actualY, cols, len = world:move(self, self.x, self.y, collisionFilter)
 	for i=1, len do
 		local v = cols[i]
-		if v.type == 'slide' then
+		if v.other.is == 'wall' then
 			if v.normal.x == -1 then 
 				self.x = v.other.x-self.w
 				self.vx = 0

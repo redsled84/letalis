@@ -1,6 +1,6 @@
-local Game = require 'systems.game-sys.game'
-local tileSize = Game.tileSize
-local bumpWorld = Game.world
+local Globals = require 'globals'
+local tileSize = Globals.tileSize
+local bumpWorld = Globals.world
 local Physics = require 'libs.physics'
 local Block = require 'systems.block'
 local polyfill = require 'libs.polyfill'
@@ -97,7 +97,7 @@ function Dungeon:generateDoors()
 
 					if math.abs(y2 - y1) >= tileSize then
 						local doorY = 0
-						if math.abs(y2 - y1) - tileSize == 0 or math.abs(y2 - y1) == tileSize then
+						if math.abs(y2 - y1) <= tileSize then
 							doorY = y1
 						else
 							doorY = (math.random(0, (y2-y1-tileSize)/tileSize) * tileSize) + y1
@@ -117,7 +117,7 @@ function Dungeon:generateDoors()
 					end
 					if math.abs(x2 - x1) >= tileSize then
 						local doorX = 0
-						if math.abs(x2 - x1) - tileSize == 0 or math.abs(x2 - x1) == tileSize then
+						if math.abs(x2 - x1) <= tileSize then
 							doorX = x1
 						else
 							doorX = (math.random(0, (x2-x1-tileSize)/tileSize) * tileSize) + x1
@@ -163,6 +163,15 @@ function Dungeon:getPointInRandomRoom(type)
 		rndRoomY = 1 
 	end
 	return rndRoom.x + rndRoomX*tileSize, rndRoom.y + rndRoomY*tileSize
+end
+
+
+function Dungeon:getDungeonHasGenerated()
+	if #self.rooms > 0 then
+		return true
+	else
+		return false
+	end
 end
 
 

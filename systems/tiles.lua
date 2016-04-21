@@ -1,5 +1,5 @@
-local Game = require 'systems.game-sys.game'
-local tileSize = Game.tileSize
+local Globals = require 'globals'
+local tileSize = Globals.tileSize
 local Tiles = {}
 
 function Tiles:createStartingNode(x, y)
