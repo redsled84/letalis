@@ -17,7 +17,6 @@ function Levels:newStaticLevel(path)
 end
 
 function Levels:newDungeonLevel()
-	local dt = love.timer.getDelta()
 	Dungeon:load(15)
 end
 

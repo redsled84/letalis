@@ -53,7 +53,7 @@ function Player:collision()
 	local actualX, actualY, cols, len = world:move(self, self.x, self.y, collisionFilter)
 	for i=1, len do
 		local v = cols[i]
-		if v.other.is == 'wall' then
+		if v.type == 'slide' then
 			if v.normal.x == -1 then 
 				self.x = v.other.x-self.w
 				self.vx = 0
