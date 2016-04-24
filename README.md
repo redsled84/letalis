@@ -1,4 +1,4 @@
-#Untitled Roguelike
+#Luscious
 A 2D roguelike game originally developed for 20% time at GBiT. 
 
 #Currently Includes
