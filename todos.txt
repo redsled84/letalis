@@ -1,0 +1,17 @@
+-- SWEET THANG LETS GET SOME CODIN' DONE --
+
+[[[[ DISCLAIMER: NONE OF THESE ARE IN A PARTICULAR ORDER, somewhat mapped out tho... ]]]]
+
+
+-- What to do, what to do...
+	* Hub World that has certain areas where dungeons could spawn
+	* Improve Leveling system
+	* Get some awesome sprites
+	* Make a Tiles System
+	* ... Quads System and Animation System too
+	* Get AI System and Enemy System itself done
+	* Chests and Items and other cool things
+	* UI :O
+	* Inventory
+
+-- Current Objective: Move to a dungeon level from a static level and vice versa
