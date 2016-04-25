@@ -6,10 +6,6 @@ local Levels = {}
 
 function Levels:initialize()
 	self.level = {}
-	self.cache = {}
-	self.paths = {}
-	self.timer = 0
-	self.tempTimer = 0
 end
 
 function Levels:newStaticLevel(path)
@@ -21,7 +17,6 @@ function Levels:newDungeonLevel()
 end
 
 function Levels:popLevel()
-	table.insert(self.cache, self.level)
 	self.level = {}
 	local items, len = world:getItems()
 	for i=1, len do
@@ -33,8 +28,13 @@ function Levels:popLevel()
 	self:newDungeonLevel()
 end
 
-function Levels:clearCache()
-	self.cache = {}
+function Levels:moveToLevel(levelType, path)
+	self:popLevel()
+	if levelType == 'dungeon' then
+		Levels:newDungeonLevel()
+	elseif levelType == "static" then
+		Levels:newStaticLevel(path)
+	end 
 end
 
 return Levels

@@ -1,7 +1,7 @@
 local Dungeon = require 'systems.dungeon'
 local Map = require 'systems.map'
 local Player = require 'objects.player'
-local Levels = require 'systems.game-sys.levels'
+local Levels = require 'systems.Game.levels'
 local Globals = require 'globals'
 local Camera
 
@@ -20,8 +20,9 @@ local Game = {
 
 function Game:startGame(path)
 	Levels:initialize()
-	Levels:newDungeonLevel()
-	-- Levels:newStaticLevel(path)
+	-- Levels:newDungeonLevel()
+
+	Levels:newStaticLevel(package.path .. 'levels/level_01.txt')
 end
 
 function Game:updateGame(dt)

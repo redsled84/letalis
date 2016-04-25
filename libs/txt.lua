@@ -3,6 +3,7 @@ local txt = {}
 function txt.parseMap(path, option)
 	local fs = love.filesystem
 	if path ~= nil then
+
 		local layers = {}
 		local temp = {}
 		local w, h, tileW, tileH

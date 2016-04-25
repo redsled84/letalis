@@ -1,14 +1,14 @@
 local Tiles = require 'systems.tiles'
 local Globals = require 'globals'
-local Levels = require 'systems.game-sys.levels'
-local Game = require 'systems.game-sys.game'
+local Levels = require 'systems.Game.levels'
+local Game = require 'systems.Game.game'
 local Camera 
 
 local gamera = require 'libs.gamera'
 local world = Game.world
 
 function love.load()
-	Game:startGame('levels/level_01.txt')
+	Game:startGame()
 end
 
 function love.update(dt)
