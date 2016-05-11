@@ -43,4 +43,15 @@ function polyfill.approach (sVel, accel, goal)
 	return sVel
 end
 
+function polyfill.aabb(a, b)
+	return a.x + a.w > b.x and
+		a.x < b.x + b.w and
+		a.y + a.h > b.y and
+		a.y < b.y + b.h
+end
+
+function polyfill.dis(a, b)
+	return math.abs(math.sqrt(((b.x+b.w/2)-(a.x+a.w/2))^2 + ((b.y+b.h/2)-(a.y+a.h/2))^2))
+end
+
 return polyfill
