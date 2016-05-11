@@ -1,6 +1,8 @@
 local Map = require 'systems.map'
 local Globals = require 'globals'
 local Dungeon = require 'systems.dungeon'
+local Enemy = require 'objects.enemy'
+local Items = require 'objects.items'
 local world = Globals.world
 local Levels = {}
 
@@ -13,11 +15,11 @@ function Levels:initialize()
 end
 
 function Levels:newStaticLevel(path)
-	self.level = Map.newMap(0, 0, path)
+	self.level = Map:newMap(0, 0, path)
 end
 
 function Levels:newDungeonLevel()
-	Dungeon:load(15)
+	Dungeon:load(25)
 end
 
 function Levels:popLevel()
@@ -28,6 +30,8 @@ function Levels:popLevel()
 		local item = items[i]
 		world:remove(item)
 	end
+	Enemy.enemies = {}
+	Items.items = {}
 	Dungeon:initialize()
 	self:initialize()
 	self:newDungeonLevel()

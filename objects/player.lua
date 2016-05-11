@@ -1,5 +1,8 @@
 local inspect = require 'libs.inspect'
 local class = require 'libs.middleclass'
+local Items = require 'objects.items'
+local Enemy = require 'objects.enemy'
+local Block = require 'systems.block'
 local Globals = require 'globals'
 local world = Globals.world
 local Player = class('Player')
@@ -11,11 +14,14 @@ function Player:initialize(x, y, w, h)
 	self.spd = 600
 	self.vx, self.vy = 0, 0
 	self.radius = 100
+	self.health = 100
+	self.maxHealth = 100
+	self.itemCounter = 0
 	world:add(self, x, y, w, h)
 end
 
 local function collisionFilter(item, other)
-	if other.is == "item" then
+	if other.is == 'potion' then
 		return 'cross'
 	else
 		return 'slide'
@@ -49,11 +55,40 @@ function Player:movement(dt)
 	-- need to make the physics bodies asleep, then generate rooms, find touching sides, generate doors
 end
 
-function Player:collision()
+function Player:addHealth(amount)
+	if self.health + amount > self.maxHealth then
+		self.health = self.maxHealth
+	else
+		self.health = self.health + amount
+	end
+end
+
+function Player:collision(dt)
 	local actualX, actualY, cols, len = world:move(self, self.x, self.y, collisionFilter)
-	for i=1, len do
+	for i=len, 1, -1 do
 		local v = cols[i]
 		if v.type == 'slide' then
+			if v.other.chestType == 'iron' and v.other.opened == false then
+				v.other.spriteNum = 4
+				local potion, i = Items:newPotion(v.other.x+v.other.w/2, v.other.y+v.other.h, 'red')
+				potion.index = i
+				Block:newBlock(potion)
+				v.other.opened = true
+			end
+
+			if v.other.is == 'enemy' then
+				self.health = self.health - 200 * dt
+
+				local dis = polyfill.dis(self, v.other)
+				if dis < self.radius and love.keyboard.isDown('space') then
+					v.other.health = math.floor(v.other.health - 200 * dt)
+				end
+
+				if v.other.health < 0 then
+					Block:removeBlock(v.other)
+				end
+			end
+
 			if v.normal.x == -1 then 
 				self.x = v.other.x-self.w
 				self.vx = 0
@@ -71,7 +106,9 @@ function Player:collision()
 				self.vy = 0
 			end
 		else
-			world:remove(v.other)
+			self:addHealth(25)
+			table.remove(Items.items, v.other.index)
+			Block:removeBlock(v.other)
 		end
 	end
 end
@@ -86,7 +123,7 @@ function Player:getCenter()
 end
 
 function Player:update(dt)
-	Player:collision()
+	Player:collision(dt)
 	Player:movement(dt)
 end
 
@@ -95,7 +132,12 @@ function Player:draw()
 	local x, y = self:getCenter()
 	lg.setColor(255,255,255)
 	lg.rectangle('fill', self.x, self.y, self.w, self.h)
-	lg.circle('line', x, y, self.radius)
+	-- lg.circle('line', x, y, self.radius)
+	lg.setColor(0,255,0)
+	lg.rectangle('fill', self.x-self.w*2.5,self.y-20, self.health, 12)
+	lg.setColor(255,255,255)
+	lg.rectangle('line', self.x-self.w*2.5,self.y-20, 100, 12)
+	lg.print(tostring(math.floor(self.health)) .. ' / ' .. tostring(self.maxHealth), self.x-self.w, self.y-20)
 end
 
 return Player

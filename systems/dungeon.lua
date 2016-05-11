@@ -2,6 +2,7 @@ local Globals = require 'globals'
 local tileSize = Globals.tileSize
 local bumpWorld = Globals.world
 local Physics = require 'libs.physics'
+local Chests = require 'objects.chests'
 local Block = require 'systems.block'
 local polyfill = require 'libs.polyfill'
 local physicsWorld = love.physics.newWorld(); love.physics.setMeter(64)
@@ -117,7 +118,7 @@ function Dungeon:generateDoors()
 					end
 					if math.abs(x2 - x1) >= tileSize then
 						local doorX = 0
-						if math.abs(x2 - x1) <= tileSize then
+						if math.abs(x2 - x1) == tileSize then
 							doorX = x1
 						else
 							doorX = (math.random(0, (x2-x1-tileSize)/tileSize) * tileSize) + x1
@@ -154,20 +155,23 @@ end
 function Dungeon:getPointInRandomRoom(type)
 	local rndIndex = math.random(1, #self.rooms)
 	local rndRoom = self.rooms[rndIndex]
-	local rndRoomX, rndRoomY
+	local rndRoomX, rndRoomY = 0, 0
 	if type == 'random' then
-		rndRoomX = math.random(2, rndRoom.w/tileSize-1)
-		rndRoomY = math.random(2, rndRoom.h/tileSize-1)
+		rndRoomX = math.random(2, (rndRoom.w/tileSize)-3)
+		rndRoomY = math.random(2, (rndRoom.h/tileSize)-3)
 	elseif type == 'corner' then
 		rndRoomX = 1
 		rndRoomY = 1 
+	elseif type == 'center' then
+		rndRoomX = math.floor(rndRoom.w / 2)
+		rndRoomY = math.floor(rndRoom.h / 2)
 	end
 	return rndRoom.x + rndRoomX*tileSize, rndRoom.y + rndRoomY*tileSize
 end
 
 
 function Dungeon:getDungeonHasGenerated()
-	if #self.rooms > 0 then
+	if self.rooms ~= nil then
 		return true
 	else
 		return false
@@ -233,7 +237,16 @@ function Dungeon:generateRooms()
 			v.body:destroy()
 			table.remove(self.physicsBodies, i)
 		end
+	end
+end
 
+
+function Dungeon:generateChests(n)
+	for i=1, n do
+		local x, y = self:getPointInRandomRoom('random')
+		local chest = Chests:newChest(x, y, 'iron')
+		Block:newBlock(chest)
+		table.insert(self.chests, chest)
 	end
 end
 
@@ -246,6 +259,7 @@ function Dungeon:generateDungeon(dt, event)
 			v.y = v.y - v.y % tileSize
 		end
 		self:generateRooms()
+		self:generateChests(7)
 		event()
 	end
 	self.physicsWorld:update(dt)
@@ -253,6 +267,7 @@ end
 
 
 function Dungeon:draw()
+	if self:getDungeonHasGenerated() then
 	for _,v in ipairs(self.physicsBodies) do
 		love.graphics.setColor(0,0,255)
 		love.graphics.polygon("line", v.body:getWorldPoints(v.shape:getPoints()))
@@ -260,16 +275,24 @@ function Dungeon:draw()
 		love.graphics.polygon("fill", v.body:getWorldPoints(v.shape:getPoints()))
 	end
 
-	for _,v in ipairs(self.rooms) do
-		love.graphics.setColor(150,150,150)
-		love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
-		love.graphics.setColor(230, 230, 230, 100)
-		love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
-	end
+	-- for _,v in ipairs(self.rooms) do
+	-- 	love.graphics.setColor(150,150,150)
+	-- 	love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
+	-- 	love.graphics.setColor(180, 180, 180)
+	-- 	love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
+	-- end
 
 	for _, v in ipairs(self.doors) do
 		love.graphics.setColor(255,0,0)
 		love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
+		love.graphics.setColor(255,255,255)
+		love.graphics.print(tostring(v.x), v.x, v.y)
+		love.graphics.print(tostring(v.y), v.x, v.y+16)
+	end
+
+	for _, v in ipairs(self.chests) do
+		love.graphics.setColor(255, 255, 0)
+		Chests:draw(v)
 	end
 
 	for _, v in ipairs(self.touchingLines) do
@@ -279,6 +302,7 @@ function Dungeon:draw()
 		else
 			love.graphics.line(v.x1, v.y, v.x2, v.y)
 		end
+	end
 	end
 end
 

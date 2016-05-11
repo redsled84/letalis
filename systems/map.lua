@@ -5,8 +5,8 @@ local txt = require 'libs.txt'
 local Block = require 'systems.block'
 local Map = class('Map')
 
-function Map:newMap(x, y, path)
-    local map = txt.parseMap(path)
+function Map:newMap(x, y, mapPath)
+    local map = txt.parseMap(mapPath)
     local x, y = x, y
     for i=1, #map.layers do
         local v = map.layers[i]
