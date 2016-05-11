@@ -77,8 +77,9 @@ function Player:collision(dt)
 			end
 
 			if v.other.is == 'enemy' then
-				self.health = self.health - 200 * dt
-
+				if self.health > 0 then
+					self.health = self.health - 200 * dt
+				end
 				local dis = polyfill.dis(self, v.other)
 				if dis < self.radius and love.keyboard.isDown('space') then
 					v.other.health = math.floor(v.other.health - 200 * dt)
@@ -133,8 +134,10 @@ function Player:draw()
 	lg.setColor(255,255,255)
 	lg.rectangle('fill', self.x, self.y, self.w, self.h)
 	-- lg.circle('line', x, y, self.radius)
-	lg.setColor(0,255,0)
-	lg.rectangle('fill', self.x-self.w*2.5,self.y-20, self.health, 12)
+	if self.health > 0 then
+		lg.setColor(0,255,0)
+		lg.rectangle('fill', self.x-self.w*2.5,self.y-20, self.health, 12)
+	end	
 	lg.setColor(255,255,255)
 	lg.rectangle('line', self.x-self.w*2.5,self.y-20, 100, 12)
 	lg.print(tostring(math.floor(self.health)) .. ' / ' .. tostring(self.maxHealth), self.x-self.w, self.y-20)

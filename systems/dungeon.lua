@@ -274,20 +274,22 @@ function Dungeon:draw()
 		love.graphics.setColor(0,0,255,100)
 		love.graphics.polygon("fill", v.body:getWorldPoints(v.shape:getPoints()))
 	end
-
-	-- for _,v in ipairs(self.rooms) do
-	-- 	love.graphics.setColor(150,150,150)
-	-- 	love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
-	-- 	love.graphics.setColor(180, 180, 180)
-	-- 	love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
-	-- end
-
-	for _, v in ipairs(self.doors) do
-		love.graphics.setColor(255,0,0)
-		love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
-		love.graphics.setColor(255,255,255)
-		love.graphics.print(tostring(v.x), v.x, v.y)
-		love.graphics.print(tostring(v.y), v.x, v.y+16)
+	if debugOn then
+		for _, v in ipairs(self.doors) do
+			love.graphics.setColor(255,0,0)
+			love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
+			love.graphics.setColor(255,255,255)
+			love.graphics.print(tostring(v.x), v.x, v.y)
+			love.graphics.print(tostring(v.y), v.x, v.y+16)
+		end
+		for _, v in ipairs(self.touchingLines) do
+			love.graphics.setColor(0,255,0)
+			if v.x ~= nil then
+				love.graphics.line(v.x, v.y1, v.x, v.y2)
+			else
+				love.graphics.line(v.x1, v.y, v.x2, v.y)
+			end
+		end
 	end
 
 	for _, v in ipairs(self.chests) do
@@ -295,14 +297,6 @@ function Dungeon:draw()
 		Chests:draw(v)
 	end
 
-	for _, v in ipairs(self.touchingLines) do
-		love.graphics.setColor(0,255,0)
-		if v.x ~= nil then
-			love.graphics.line(v.x, v.y1, v.x, v.y2)
-		else
-			love.graphics.line(v.x1, v.y, v.x2, v.y)
-		end
-	end
 	end
 end
 

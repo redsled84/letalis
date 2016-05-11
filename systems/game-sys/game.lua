@@ -58,6 +58,9 @@ function Game:updateGame(dt)
 	end
 end
 
+local timer = 0 
+local str = 'Loading '
+
 function Game:drawGame()
 	if Camera ~= nil then
 		Camera:draw(function()
@@ -71,11 +74,16 @@ function Game:drawGame()
 			end
 			for i=1, len do
 				local item = items[i]
-				if item.is ~= 'chest' and item.is ~= 'potion' and item.is ~= 'enemy' then
+				if not debugOn then
+					if item.is ~= 'chest' and item.is ~= 'potion' and item.is ~= 'enemy'then
+						love.graphics.setColor(255,255,0,150)
+						love.graphics.rectangle("fill", item.x, item.y, item.w, item.h)
+						-- love.graphics.setColor(255,255,255)
+						-- love.graphics.print(i, item.x, item.y)
+					end
+				else
 					love.graphics.setColor(255,255,0,150)
 					love.graphics.rectangle("fill", item.x, item.y, item.w, item.h)
-					-- love.graphics.setColor(255,255,255)
-					-- love.graphics.print(i, item.x, item.y)
 				end
 			end
 			Dungeon:draw()
@@ -83,6 +91,16 @@ function Game:drawGame()
 			Enemy:draw()
 			Player:draw()
 		end)
+	else
+		
+		local dt = love.timer.getDelta()
+		timer = timer + dt
+		if timer < .75 then
+			str = str .. '.'
+		end
+		love.graphics.setColor(255,255,255)
+		love.graphics.print(str, love.graphics.getWidth()/2-(string.len(str)/2)*5, love.graphics.getHeight()/2)
+
 	end
 end
 
